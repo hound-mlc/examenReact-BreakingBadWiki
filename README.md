@@ -1,70 +1,57 @@
-# Getting Started with Create React App
+# Examen React - Breaking Bad Wiki
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Manuel López Camarena - 2020
 
-## Available Scripts
+## Cómo arrancar el proyecto
 
-In the project directory, you can run:
+El proyecto se puede arrancar con el comando estándar para cualquier aplicación en React.
 
-### `npm start`
+### `npm run start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Arrancará la aplicación en [http://localhost:3000](http://localhost:3000), para verlo desde el navegador.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Requisitos
 
-### `npm test`
+Componentes funcionales -> Casi la totalidad de páginas y componentes de la aplicación.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Hooks y hooks personalizados -> En el HoC para conectar a Redux, hooks personalizados en la carpeta hooks, useHistory y useState en varios.
 
-### `npm run build`
+Componentes de clase con uso de su ciclo de vida. -> Componente CharPortrait [CICLOS DE VIDA NO USADOS]
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+High order component -> En el spoilerMode y un HoC para conectar a la store de Redux.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Provider (el de react-router no cuenta) -> SpoilerMode, tapa todos los posibles spoilers.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Algun tipo de render props -> En el componente CharPortrait, enviada desde CharDetails.
 
-### `npm run eject`
+React router. -> En App.js
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Formulario controlado -> En formulario de búsqueda, que se puede copiar la URL de la búsqueda y te llevará a los resultados igual, tal como comentó José Francisco.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Control de errores y carga de datos -> En casi toda la aplicación, hay llamadas a la API en las que los datos eran inconsistentes, está comentado en los Hooks personalizados de las Quotes y en la saga de los personajes para el death count.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## Requisitos extra cumplidos.
+Uso de Redux y Redux Saga.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+Uso de react-bootstrap para la interfaz de usuario.
 
-## Learn More
+Componentes desacoplados lo máximo que he podido.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Reutilización máxima de los datos y llamadas a API minimizadas. **-IMPORTANTE, VER ABAJO-**
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+El ranking de asesinos puede invertir el orden.
 
-### Code Splitting
+Aparecen las muertes de los personajes en los detalles del episodio.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Reutilización de datos, minimizar llamadas a API y HoC Redux
 
-### Analyzing the Bundle Size
+Para minimizar las llamadas a la API, cuando entro en detalles de episodios o personajes, el episodio o personaje en cuestión es filtrado de los datos que haya en el estado, en vez de realizar una petición a la API más.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Esto me obligaba a tener el estado cargado completamente en todo momento, por si accedía a la aplicación desde una ruta que me llevase a los detalles del personaje, por ejemplo, evidentemente comprobando si el estado no estaba ya cargado. Por lo que realicé un HoC que me conectaba a la store de Redux y triggeaba las acciones al iniciarlo. Con este HoC envolví todas las páginas que necesitasen los datos del estado para funcionar.
 
-### Making a Progressive Web App
+* No envolví la página Assassins porque el estado que usa es realmente una lista diferente (ordenada) a la del store, sólo para mostrar.
+* Hago llamadas a la API en los hooks personalizados para así poder tener alguno, por eso no están también en el HoC.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+También quiero comentar el caso del contador de muertes de los personajes, me pareció importante tenerlo como un campo más de cada personaje desde el inicio, así que en la saga donde hago la petición, hago la llamada correspondiente para cada personaje a la API del death count, sé que esto puede ralentizar la aplicación al inicio, pero hacía falta para el apartado de asesinos y conseguía mayor fluidez después de la carga inicial. Pienso que el Death Count no debería estar en una endpoint separado de los personajes en sí, ya que es solo un campo y todos lo tienen, aunque sea 0.
 
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+En definitiva, me he tomado al pie de la letra de lo de reutilizar los datos, espero que no sea demasiado ineficiente, porque, aunque en la primera carga de datos la aplicación sea algo lenta, una vez el estado está cargado, es súper rápida.

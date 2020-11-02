@@ -1,0 +1,25 @@
+table {
+  border: 0px solid black;
+  min-width: 100px;
+  max-width: 700px;
+}
+
+td {
+  max-width: 350px;
+}
+
+thead {
+  background-color: #0C5533;
+}
+
+.collapse {
+  border-collapse: collapse;
+}
+
+.divDetails {
+  margin-top: 25px;
+  display: flex;
+  justify-items: center;
+  align-items: center;
+  flex-direction: column;
+}
